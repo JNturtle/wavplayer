@@ -19,13 +19,27 @@ class WAVPLYAER():
         播放數字的語音，目前最多到 10**3 位，也就是千。
         """
         if self.numberPre: winsound.PlaySound(self.numberPre, winsound.SND_FILENAME)
-        while digital >= 0:
-            if number // 10**digital >= 1:
+        leadNum = False
+        while number > 0:
+            """
+            從前面的位數 digital 開始
+            「如果」
+            number // 10**digital >= 1 代表有位數
+            唸出數字跟該位數， number 減去該位
+            「檢查下一位，如果有則唸。」
+            「如果沒有則跳到有並唸一次零，或者是數字為零」
+            """
+            leadDigital = number // 10**digital
+            if leadDigital >= 1:
+                leadNum = True
                 nowDigital = str(number//10**digital)[-1]
-                if not(digital == 0 and nowDigital == '0'):
-                    winsound.PlaySound('sound/number/'+ nowDigital +'.wav', winsound.SND_FILENAME)
-                if 10**digital > 1 and nowDigital != '0': 
-                    winsound.PlaySound('sound/number/'+ str(10**digital) + '.wav', winsound.SND_FILENAME)
+                winsound.PlaySound('sound/number/'+ nowDigital +'.wav', winsound.SND_FILENAME)
+                if digital > 0: winsound.PlaySound('sound/number/'+ str(10**digital) + '.wav', winsound.SND_FILENAME)
+                number -= leadDigital * 10**digital
+            else:
+                if leadNum: 
+                    leadNum = False
+                    winsound.PlaySound('sound/number/0.wav', winsound.SND_FILENAME)
             digital -= 1
         if self.numberUnit: winsound.PlaySound(self.numberUnit, winsound.SND_FILENAME)
         if self.numberEnd: winsound.PlaySound(self.numberEnd, winsound.SND_FILENAME)
